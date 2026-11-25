@@ -1,0 +1,24 @@
+name: Standard pruefen
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: standard-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          fetch-depth: 2
+      - name: Git und YAML pruefen
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --check HEAD^ HEAD
+          ruby -e "require 'yaml'; Dir['.github/workflows/*.{yaml,yml}'].each { |f| YAML.load_file(f); puts %(OK #{f}) }"
