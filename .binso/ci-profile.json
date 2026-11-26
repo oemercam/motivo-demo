@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "profile": "static",
+  "verificationWorkflow": ".github/workflows/standard-pruefen.yml",
+  "standard": "https://github.com/oemercam/binso-entwicklungsstandard/blob/main/docs/workflow-regeln.md"
+}
