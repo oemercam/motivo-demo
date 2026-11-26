@@ -22,3 +22,18 @@ jobs:
           set -euo pipefail
           git diff --check HEAD^ HEAD
           ruby -e "require 'yaml'; Dir['.github/workflows/*.{yaml,yml}'].each { |f| YAML.load_file(f); puts %(OK #{f}) }"
+      - name: BINSO-CI-Profil prüfen
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          profile = json.loads(Path(".binso/ci-profile.json").read_text(encoding="utf-8"))
+          assert profile["version"] == 1
+          assert profile["profile"] in {"static", "backend", "critical", "tooling"}
+          workflow = Path(profile["verificationWorkflow"])
+          assert workflow.parent == Path(".github/workflows") and workflow.is_file()
+          print("BINSO-CI-Profil:", profile["profile"])
+          PY
